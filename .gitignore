@@ -1,2 +1,4 @@
 *.pyc
-test.py
+*_test.py
+/__pycache__
+/logs
