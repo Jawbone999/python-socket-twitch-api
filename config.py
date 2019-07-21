@@ -10,9 +10,6 @@ PORT = c.PORT
 # The name of the bot
 USER = c.USER
 
-# The bot's ClientID
-ID = c.ID
-
 # The bots Oauth token
 PASS = c.PASS
 
@@ -20,4 +17,7 @@ PASS = c.PASS
 CHAN = c.CHAN
 
 # Tuple holding bot info (just a shortcut)
-DATA = URL, PORT, USER, ID, PASS, CHAN
+DATA = URL, PORT, USER, PASS, CHAN
+
+# File to append log data to
+logFile = c.logFile
