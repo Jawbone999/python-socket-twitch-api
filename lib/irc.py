@@ -62,7 +62,7 @@ class Irc:
         self.send(f'PRIVMSG {self.channel} {message}')
 
     def send_private(self, user, message):
-        self.send(f'PRIVMSG {self.channel} /w {user} {message}')
+        self.send(f'PRIVMSG {self.channel} .w {user} {message}')
 
     def send(self, data):
         if data[-2:] == '\r\n':

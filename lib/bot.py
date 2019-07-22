@@ -54,7 +54,7 @@ class TwitchBot:
 
     
 	def endpoll(self, user):
-		pass
+		self.irc.send_private(user, 'Not yet!')
 
 	def vote(self, user, args):
 		pass
