@@ -12,6 +12,14 @@ class Irc:
         self.channel = '#' + chan
         self.attempts = 0
         self.connect()
+
+    def clear_poll(self):
+        return {
+            'title': '',
+            'random': True,
+            'choices': [],
+            'voters': []
+        }
     
     def connect(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -45,9 +53,20 @@ class Irc:
         
         self.send(f'JOIN {self.channel}')
         logging.info(f'Joined channel {self.channel}')
+
+        self.get_permissions()
+
+    def get_permissions(self):
+        logging.debug('Gathering permissions...')
+        self.send('CAP REQ :twitch.tv/membership')
+        self.send('CAP REQ :twitch.tv/commands')
+        self.send('CAP REQ :twitch.tv/tags')
     
-    def message_channel(self, message):
-        self.send('PRIVMSG ' + message)
+    def send_channel(self, message):
+        self.send(f'PRIVMSG {self.channel} {message}')
+
+    def send_private(self, user, message):
+        self.send(f'PRIVMSG {self.channel} /w {user} {message}')
 
     def send(self, data):
         if data[-2:] == '\r\n':
@@ -57,7 +76,8 @@ class Irc:
     
     def ping(self, data):
         if data.startswith(b'PING'):
-            self.send(data.replace(b'PING', b'PONG'))
+            self.sock.send(data.replace(b'PING', b'PONG'))
+            logging.debug('Sent automated Ping to IRC server.')
 
     def recv(self, amount=1024):
         data = self.sock.recv(amount)
@@ -75,33 +95,23 @@ class Irc:
         data = self.recv(amount)
         if not data:
             logging.error('Lost connection, reconnecting...')
-            return self.connect()
+            self.connect()
 
         self.ping(data)
         if self.check_has_message(data):
             return [self.parse_message(line) for line in data.split(b'\r\n')]
     
     def check_has_message(self, data):
-        return re.match(r'^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$', data.decode())
+        return re.search(r':[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$', data.decode())
     
     def parse_message(self, data):
         if data:
             dd = data.decode('utf8')
-            user = re.findall(r'^:([a-zA-Z0-9_]+)\!', dd)[0]
-            message = re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', dd)[0]
-            if message.startswith('$'):
-                message = message[1:]
-                self.handle_command(user, message)
-                
-    def handle_command(self, user, msg):
-        args = msg.split()
-        command = args[0]
-        if command.lower() == 'ping':
-            logging.info('Received command: PING')
-            self.send('Pong!')
-        elif command.lower() == 'poll':
-            logging.info('Received command: POLL')
-            self.sock.send(b'POLL\r\n')
+            return {
+                'user': re.search(r'!(\w+)@', dd).group(1),
+                'message': re.search(r'PRIVMSG #\w+ :(.+)$', dd).group(1),
+                'mod': re.search(r'mod=(\d)', dd).group(1)
+            }
 
     def logged_in(self, data):
         return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login unsuccessful\r\n$', data.decode())

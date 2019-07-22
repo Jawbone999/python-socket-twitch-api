@@ -1,0 +1,9 @@
+{
+    "title": "Pick the game I'm going to play!",
+    "random": True,
+    "Choices": [
+        "Baba is You",
+        "Spec Ops",
+        "Minecraft"
+    ]
+}
