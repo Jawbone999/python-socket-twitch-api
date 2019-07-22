@@ -43,9 +43,8 @@ class TwitchBot:
 				logging.debug('Disconnected from IRC server.')
 				sys.exit()
 			
-	def createpoll(self, data):
-		"""
-		Usage: createpoll 
+	def createpoll(self, user, args):
+		# Usage: createpoll (auto | TITLE,RANDOM,CHOICE1,CHOICE2,CHOICE3)
 		self.poll = {
 			'title': '',
 			'random': True,
@@ -54,8 +53,8 @@ class TwitchBot:
 
 
     
-	def endpoll(self):
+	def endpoll(self, user):
 		pass
 
-	def vote(self, data):
+	def vote(self, user, args):
 		pass
