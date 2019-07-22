@@ -1,12 +1,14 @@
 from .irc import Irc
 from time import sleep
 import logging
+import sys
 
 class TwitchBot:
 	def __init__(self, url, port, user, token, chan, prefix):
 		self.irc = Irc(url, port, user, token, chan)
 		self.prefix = prefix
-
+		self.poll = {}
+		
 	def run(self):
 		while True:
 			messages = self.irc.recv_messages()
@@ -19,29 +21,38 @@ class TwitchBot:
 
 	def handle_command(self, data):
 		args = data['message'].split()
-		command = args[0]
-		args = args[1:]
-		if command.lower() == 'vote':
+		user = data['user']
+		command = args[0].lower()
+		args.pop(0)
+		if command == 'vote':
 			self.vote(user, args)
-		elif command.lower() == 'createpoll':
+		elif command == 'createpoll':
 			if data['mod']:
-				self.createpoll(data)
-		elif command.lower() == 'endpoll':
+				self.createpoll(user, args)
+		elif command == 'endpoll':
 			if data['mod']:
-				self.endpoll()
-		elif command.lower() == 'ping':
+				self.endpoll(user)
+		elif command == 'ping':
 			if data['mod']:
-				logging.info(f'Received command PING from moderator {data['user']}')
+				logging.info(f'Received command PING from moderator {user}')
 				self.irc.send_channel('Pong!')
-		elif command.lower() == 'quit':
+		elif command == 'quit' or command == 'leave' or command == 'exit':
 			if data['mod']:
-				logging.info(f'Received command QUIT from moderator {data['user']}')
-				self.irc.sock.close()
+				logging.info(f'Received command QUIT from moderator {user}')
+				self.irc.close()
 				logging.debug('Disconnected from IRC server.')
 				sys.exit()
 			
 	def createpoll(self, data):
-		pass
+		"""
+		Usage: createpoll 
+		self.poll = {
+			'title': '',
+			'random': True,
+			'choices': []
+		}
+
+
     
 	def endpoll(self):
 		pass

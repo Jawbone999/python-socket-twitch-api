@@ -13,14 +13,6 @@ class Irc:
         self.attempts = 0
         self.connect()
 
-    def clear_poll(self):
-        return {
-            'title': '',
-            'random': True,
-            'choices': [],
-            'voters': []
-        }
-    
     def connect(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock = sock
@@ -31,14 +23,14 @@ class Irc:
             logging.info('Successfully connected to IRC server.')
         except socket.error:
             logging.error(f'Error connecting to IRC server. ({self.url}:{self.port} ({self.attempts+1}')
-            
+
             if self.attempts < 2:
                 self.attempts += 1
                 self.connect()
             else:
                 logging.critical(f'Failed to connect to IRC server. ({self.url}:{self.port}')
                 sys.exit()
-        
+
         self.attempts = 0
         sock.settimeout(None)
         self.send(f'USER {self.user}')
@@ -55,6 +47,10 @@ class Irc:
         logging.info(f'Joined channel {self.channel}')
 
         self.get_permissions()
+    
+    def close(self):
+        self.sock.close()
+        logging.info('Closed connection to IRC server.')
 
     def get_permissions(self):
         logging.debug('Gathering permissions...')
