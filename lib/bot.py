@@ -44,13 +44,13 @@ class TwitchBot:
 				logging.info(f'Received command PING from moderator {user}')
 				self.irc.send_channel('Pong!')
 		elif command in self.commands['disconnect']:
-			if data['mod']:
+			if 'mod' in data['badges'] and data['badges']['mod']:
 				logging.info(f'Received command QUIT from moderator {user}')
 				self.irc.close()
 				logging.debug('Disconnected from IRC server.')
 				sys.exit()
 		elif command in self.commands['echo']:
-			if data['mod']:
+			if self.permissionLevel(data['badges'] >= sometjing):
 				logging.info(f'Received command ECHO from moderator {user}')
 				self.irc.send_channel(' '.join(args))
 			

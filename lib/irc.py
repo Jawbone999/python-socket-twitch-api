@@ -78,8 +78,8 @@ class Irc:
 
     def recv(self, amount=1024):
         data = self.sock.recv(amount)
-        # Uncomment the following lines to log all chat messages
         
+        # Uncomment the following lines to log all chat messages
         dd = data.decode().split('\r\n')
         if not dd[-1]:
             dd.pop(-1)
@@ -104,14 +104,18 @@ class Irc:
     def parse_message(self, data):
         if data:
             dd = data.decode('utf8')
-            x= {
+
+            userData = {
                 'user': re.search(r'!(\w+)@', dd).group(1),
                 'message': re.search(r'PRIVMSG #\w+ :(.+)$', dd).group(1),
-                'mod': re.search(r'mod=(\d)', dd).group(1),
-                'broadcaster': re.search(r';badges=(\w+\/\d,)*broadcaster\/\d.+', dd)
+                'badges': {'all': re.search(r';badges=((.)*?);', dd).group(1)}
             }
-            print(x)
-            return x
+            tagList = userData['badges']['all'].split(',')
+            for tag in tagList:
+                tagData = tag.split('/')
+                userData['badges'][tagData[0]] = tagData[1]
+                logging.debug(f'Parsed message data: {userData}')
+            return userData
 
     def logged_in(self, data):
         return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login unsuccessful\r\n$', data.decode())
