@@ -1,0 +1,38 @@
+{
+    "vote": [
+        "vote",
+        "pick",
+        "choose"
+    ],
+    "disconnect": [
+        "disconnect",
+        "leave",
+        "quit",
+        "exit",
+        "stop"
+    ],
+    "createpoll": [
+        "createpoll",
+        "generatepoll",
+        "makepoll",
+        "startpoll"
+    ],
+    "endpoll": [
+        "endpoll",
+        "stoppoll"
+    ],
+    "showpoll": [
+        "showpoll",
+        "displaypoll",
+        "poll"
+    ],
+    "ping": [
+        "ping",
+        "upcheck"
+    ],
+    "echo": [
+        "echo",
+        "say",
+        "repeat"
+    ]
+}

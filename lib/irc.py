@@ -59,10 +59,11 @@ class Irc:
         self.send('CAP REQ :twitch.tv/tags')
     
     def send_channel(self, message):
-        self.send(f'PRIVMSG {self.channel} {message}')
+        self.send(f'PRIVMSG {self.channel} :{message}')
 
     def send_private(self, user, message):
-        self.send(f'PRIVMSG {self.channel} .w {user} {message}')
+        self.send(f'PRIVMSG {self.channel} :.w {user} {message}')
+        
 
     def send(self, data):
         if data[-2:] == '\r\n':
@@ -78,13 +79,13 @@ class Irc:
     def recv(self, amount=1024):
         data = self.sock.recv(amount)
         # Uncomment the following lines to log all chat messages
-        """
+        
         dd = data.decode().split('\r\n')
         if not dd[-1]:
             dd.pop(-1)
         for line in dd:
             logging.debug(f'Received data: {line}')
-        """
+
         return data
 
     def recv_messages(self, amount=1024):
@@ -103,11 +104,14 @@ class Irc:
     def parse_message(self, data):
         if data:
             dd = data.decode('utf8')
-            return {
+            x= {
                 'user': re.search(r'!(\w+)@', dd).group(1),
                 'message': re.search(r'PRIVMSG #\w+ :(.+)$', dd).group(1),
-                'mod': re.search(r'mod=(\d)', dd).group(1)
+                'mod': re.search(r'mod=(\d)', dd).group(1),
+                'broadcaster': re.search(r';badges=(\w+\/\d,)*broadcaster\/\d.+', dd)
             }
+            print(x)
+            return x
 
     def logged_in(self, data):
         return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login unsuccessful\r\n$', data.decode())
