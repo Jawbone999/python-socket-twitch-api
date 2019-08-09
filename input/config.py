@@ -1,5 +1,5 @@
 # Remove this:
-import config_test as c
+import input.config_test as c
 
 # The IRC Server URL
 URL = c.URL

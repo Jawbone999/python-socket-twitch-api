@@ -2,8 +2,8 @@
     "title": "Pick the game I'm going to play!",
     "random": true,
     "choices": [
-        "The Red Strings Club",
-        "Baba is You",
-        "Visage"
+        "Game A",
+        "Game B",
+        "Game C"
     ]
 }

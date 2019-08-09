@@ -6,7 +6,7 @@ import re
 class Irc:
     def __init__(self, url, port, user, token, chan):
         self.url = url
-        self.port = port
+        self.port = int(port)
         self.user = user.lower()
         self.token = token
         self.channel = '#' + chan
