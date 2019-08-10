@@ -1,6 +1,3 @@
-# Remove this:
-import input.config_test as c
-
 # The IRC Server URL
 URL = 'irc.twitch.tv'
 
