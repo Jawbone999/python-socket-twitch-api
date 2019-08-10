@@ -34,5 +34,8 @@ In this folder holds all the commands and their aliases. To add an alias, simply
 ## `admins.json`
 While the bot prevents non-moderators from using every command, you can allow specific users full access using this file. Simply add their name to the list.
 
+## `poll.json`
+This poll is used if the _createpoll_ command is run with the argument _auto_. Change it how you like.
+
 # Running your bot
 Once you're happy with the configurations, simply navigate to the directory of `main.py` and run `python main.py`.

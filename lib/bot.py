@@ -50,7 +50,7 @@ class TwitchBot:
 				self.showpoll(user, args)
 		elif command in self.commands['ping']:
 			if self.hasPerm(badges):
-				logging.info(f'Received command PING from moderator {user}')
+				logging.info(f'Received command PING from {user}')
 				self.irc.send_channel('Pong!')
 		elif command in self.commands['disconnect']:
 			if user in self.admins or self.hasPerm(badges, minimum='broadcaster'):
@@ -101,7 +101,7 @@ class TwitchBot:
 		try:
 			if not args:
 				# The user failed to give any arguments
-				return self.irc.send_private(user, f'Usage: {self.prefix}createpoll auto or ADD other stuff')
+				return self.irc.send_private(user, f'Usage: {self.prefix}createpoll auto OR {self.prefix}createpoll [json string similar to poll.json]')
 			if args[0].lower() == 'auto':
 				# Generate a poll using the input file
 				with open('input/poll.json') as f:
