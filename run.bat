@@ -1,5 +1,5 @@
 @echo off
-:: Replace the following line with "Path to python.exe" "Path to main.py"
+:: Replace the two path strings with real paths to these files
 "python.exe path" "main.py path"
 
 :: Below is an example of what it could look like

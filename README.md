@@ -55,4 +55,4 @@ Inside `bot.py`, the function `handle_command` performs all permission checks be
 # Running your bot
 Once you're happy with the configurations, simply navigate to the directory of `main.py` and run `python main.py`.
 
-You can also edit the `run.bat` file and use that.
+If you're not used to command line, edit `setup.bat` and `run.bat`, then run those two files in that order.
