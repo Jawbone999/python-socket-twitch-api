@@ -12,10 +12,10 @@ class TwitchBot:
 		self.prefix = prefix
 		self.poll = {'open': False}
 
-		with open('lib/commands.json') as f:
+		with open('input/commands.json') as f:
 			self.commands = json.load(f)
 		
-		with open('lib/badges.json') as f:
+		with open('input/badges.json') as f:
 			self.permissionValues = json.load(f)
 
 		with open('input/admins.json') as f:
