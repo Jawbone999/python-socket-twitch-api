@@ -1,4 +1,4 @@
-# twitch-api
+# Python Socket Twitch API
 A socket api for Twitch IRC servers.
 
 # Usage
