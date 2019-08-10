@@ -28,14 +28,31 @@ To create a bot with which you may interface with Twitch, you must do the follow
 # Configuring your bot
 Within the `input` folder, there are a few files which allow for bot configuration.
 
-## `commands.json`
+### `commands.json`
 In this folder holds all the commands and their aliases. To add an alias, simply add to the list of strings under the desired command. Do **not** edit the main command name unless you know what you're doing.
 
-## `admins.json`
+### `admins.json`
 While the bot prevents non-moderators from using every command, you can allow specific users full access using this file. Simply add their name to the list.
 
-## `poll.json`
+### `poll.json`
 This poll is used if the _createpoll_ command is run with the argument _auto_. Change it how you like.
+
+### `badges.json`
+This file assigns numerical value to each badge level. It is only used when calculating "Total permission level". So, for example, someone who is a VIP sub has the same total permission level as a moderator by default. This metric is not used anywhere by default in the bot, however.
+
+## Py File Modifications
+You can also modify the source code, though it is recommended you know what you're doing. Below are some places to look for different modifications.
+
+#### Add commands
+Inside `bot.py`, the function `handle_command` has an if statement checking for each command.
+
+#### Change logging level
+Inside `main.py`, change the logging configuration level.
+
+#### Edit permission levels
+Inside `bot.py`, the function `handle_command` performs all permission checks before running a command.
 
 # Running your bot
 Once you're happy with the configurations, simply navigate to the directory of `main.py` and run `python main.py`.
+
+You can also edit the `run.bat` file and use that.
