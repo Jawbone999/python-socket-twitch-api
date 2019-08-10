@@ -1,4 +1,4 @@
-# twitch-api
+# Python Socket Twitch API
 A socket api for Twitch IRC servers.
 
 # Usage
@@ -24,6 +24,8 @@ To create a bot with which you may interface with Twitch, you must do the follow
    PASS = *oauth:1k4j4njnuh2o41jo1j4jjj11io23jo (not this exactly, but what you received earlier)*
 
    CHAN = *Twitch channel you want the bot to chat in*
+
+__NOTE: Your Twitch bot must be [verified](https://dev.twitch.tv/limit-increase) to make full use of this API__
 
 # Configuring your bot
 Within the `input` folder, there are a few files which allow for bot configuration.
