@@ -79,7 +79,6 @@ class Irc:
     def recv(self, amount=1024):
         data = self.sock.recv(amount)
         
-        # Uncomment the following lines to log all chat messages
         dd = data.decode().split('\r\n')
         if not dd[-1]:
             dd.pop(-1)
@@ -97,10 +96,10 @@ class Irc:
         self.ping(data)
         if self.check_has_message(data):
             return [self.parse_message(line) for line in data.split(b'\r\n')]
-    
+
     def check_has_message(self, data):
         return re.search(r':[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$', data.decode())
-    
+
     def parse_message(self, data):
         if data:
             dd = data.decode('utf8')
@@ -108,22 +107,17 @@ class Irc:
             userData = {
                 'user': re.search(r'!(\w+)@', dd).group(1),
                 'message': re.search(r'PRIVMSG #\w+ :(.+)$', dd).group(1),
-                'badges': {'all': re.search(r';badges=((.)*?);', dd).group(1)}
+                'badges': {}
             }
-            tagList = userData['badges']['all'].split(',')
+            tagList = re.search(r';badges=((.)*?);', dd).group(1).split(',')
             for tag in tagList:
                 tagData = tag.split('/')
-                userData['badges'][tagData[0]] = tagData[1]
-                logging.debug(f'Parsed message data: {userData}')
+                userData['badges'][tagData[0]] = int(tagData[1])
+            logging.debug(f'Parsed message data: {userData}')
             return userData
 
     def logged_in(self, data):
         return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login unsuccessful\r\n$', data.decode())
-    
+
     def has_message(self, data):
         return re.match(r'^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$', data.decode())
-    
-    
-
-
-        

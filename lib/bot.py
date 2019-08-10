@@ -3,16 +3,24 @@ from time import sleep
 import logging
 import sys
 import json
-from random import randint
+from random import randint, sample
+import operator
 
 class TwitchBot:
 	def __init__(self, url, port, user, token, chan, prefix):
 		self.irc = Irc(url, port, user, token, chan)
 		self.prefix = prefix
 		self.poll = {'open': False}
+
 		with open('lib/commands.json') as f:
 			self.commands = json.load(f)
 		
+		with open('lib/badges.json') as f:
+			self.permissionValues = json.load(f)
+
+		with open('input/admins.json') as f:
+			self.admins = json.load(f)
+
 	def run(self):
 		while True:
 			messages = self.irc.recv_messages()
@@ -26,34 +34,68 @@ class TwitchBot:
 	def handle_command(self, data):
 		args = data['message'].split()
 		user = data['user']
+		badges = data['badges']
 		command = args[0].lower()
 		args.pop(0)
 		if command in self.commands['vote']:
 			self.vote(user, args)
 		elif command in self.commands['createpoll']:
-			if data['mod']:
+			if self.hasPerm(badges):
 				self.createpoll(user, args)
 		elif command in self.commands['endpoll']:
-			if data['mod']:
+			if self.hasPerm(badges):
 				self.endpoll(user)
 		elif command in self.commands['showpoll']:
-			if data['mod']:
+			if self.hasPerm(badges):
 				self.showpoll(user, args)
 		elif command in self.commands['ping']:
-			if data['mod']:
+			if self.hasPerm(badges):
 				logging.info(f'Received command PING from moderator {user}')
 				self.irc.send_channel('Pong!')
 		elif command in self.commands['disconnect']:
-			if 'mod' in data['badges'] and data['badges']['mod']:
-				logging.info(f'Received command QUIT from moderator {user}')
+			if user in self.admins or self.hasPerm(badges, minimum='broadcaster'):
+				logging.info(f'Received command QUIT from {user}')
 				self.irc.close()
 				logging.debug('Disconnected from IRC server.')
 				sys.exit()
 		elif command in self.commands['echo']:
-			if self.permissionLevel(data['badges'] >= sometjing):
-				logging.info(f'Received command ECHO from moderator {user}')
+			if self.hasPerm(badges):
+				logging.info(f'Received command ECHO from {user}')
 				self.irc.send_channel(' '.join(args))
-			
+		elif command in self.commands['subtime']:
+			if self.hasPerm(badges, minimum='subscriber', op=operator.eq):
+				logging.info(f'Received command SUBTIME from {user}')
+				# This is not exact whatsoever
+				self.irc.send_private(user, f'You have been subscribed for at least {self.subTime(badges)} months.')
+	
+	def highestPermission(self, badgeList):
+		# badges.json MUST list badges in decreasing permission level order
+		for badge in self.permissionValues:
+			if badge in badgeList:
+				logging.debug(f'Highest permission level: {badge} : {self.permissionValues[badge]}')
+				return badge
+
+	def totalPermission(self, badgeList):
+		total = 0
+		for badge in self.permissionValues:
+			if badge in badgeList:
+				total += self.permissionValues[badge]
+		logging.debug(f'Total permission level: {total}')
+		return total
+
+	def subTime(self, badges):
+		if 'subscriber' not in badges:
+			return 0
+		return badges['subscriber']
+
+	def hasPerm(self, badges, minimum='moderator', op=operator.ge, sum=False):
+		if sum:
+			return op(self.totalPermission(badges), self.permissionValues[minimum])
+		else:
+			if op == operator.eq:
+				return minimum in badges
+			return op(self.permissionValues[self.highestPermission(badges)], self.permissionValues[minimum])
+
 	def createpoll(self, user, args):
 		# Usage: createpoll (auto | json mimicking input/poll.json)
 		try:
@@ -102,20 +144,20 @@ class TwitchBot:
 		games = {i : 0 for i in range(len(self.poll['choices']))}
 		for choice in self.poll['votes'].values():
 			games[choice - 1] += 1
-		displayList = {count : game for game, count in zip(self.poll['choices'], games.values())}
-		winner = displayList[max(displayList)]
+		displayList = {game : count for game, count in zip(self.poll['choices'], games.values())}
+		ranking = {}
+		for game, count in displayList.items():
+			if count not in ranking:
+				ranking[count] = []
+			ranking[count].append(game)
+		winner = sample(ranking[max(ranking.keys())], 1)[0]
 		displayString = f'Winner: {winner} --- '
-		rankingString = '' # Problem: Have to unreverse displayList kv pairs because they are overlapping keys for votes
-		# Need to get all tying top picks and randomly pick the winner in case of a tie
-		# Basically, get list of top scorers, then do that random pick from list function on it
-		# So if no ties, randomly samples from single item list which works fine for this
+		rankingString = ''
 		for key in displayList:
-			rankingString += f' | {displayList[key]}: {key}'
+			rankingString += f' | {key}: {displayList[key]}'
 		displayString += rankingString[3:]
 		self.irc.send_channel(displayString)
 
-
-		
 	def vote(self, user, args):
 		if not args:
 			return self.irc.send_private(user, 'Error casting vote - please send a choice!')

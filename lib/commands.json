@@ -6,6 +6,7 @@
     ],
     "disconnect": [
         "disconnect",
+        "dc",
         "leave",
         "quit",
         "exit",
@@ -24,7 +25,8 @@
     "showpoll": [
         "showpoll",
         "displaypoll",
-        "poll"
+        "poll",
+        "currentpoll"
     ],
     "ping": [
         "ping",
@@ -33,6 +35,13 @@
     "echo": [
         "echo",
         "say",
-        "repeat"
+        "repeat",
+        "simonsays",
+        "send"
+    ],
+    "subtime": [
+        "subtime",
+        "subbed",
+        "sublength"
     ]
 }
