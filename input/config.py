@@ -2,19 +2,19 @@
 import input.config_test as c
 
 # The IRC Server URL
-URL = c.URL
+URL = 'irc.twitch.tv'
 
 # Port for the IRC Server
-PORT = c.PORT
+PORT = 6667
 
 # The name of the bot
-USER = c.USER
+USER = 'BOT USERNAME'
 
 # The bots Oauth token
-PASS = c.PASS
+PASS = 'OAUTH TOKEN'
 
 # The channel to moderate
-CHAN = c.CHAN
+CHAN = 'CHANNEL NAME'
 
 # Bot command prefix
 PREFIX = '$'
@@ -23,4 +23,4 @@ PREFIX = '$'
 DATA = URL, PORT, USER, PASS, CHAN, PREFIX
 
 # File to append log data to
-logFile = c.logFile
+logFile ='logs/TwitchBotLogs.log'
