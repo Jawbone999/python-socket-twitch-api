@@ -25,6 +25,8 @@ To create a bot with which you may interface with Twitch, you must do the follow
 
    CHAN = *Twitch channel you want the bot to chat in*
 
+__ NOTE: Your Twitch bot must be [verified](https://dev.twitch.tv/limit-increase) to make full use of this API__
+
 # Configuring your bot
 Within the `input` folder, there are a few files which allow for bot configuration.
 
