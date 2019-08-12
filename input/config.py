@@ -16,8 +16,16 @@ CHAN = 'CHANNEL NAME'
 # Bot command prefix
 PREFIX = '$'
 
-# Tuple holding bot info (just a shortcut)
-DATA = URL, PORT, USER, PASS, CHAN, PREFIX
+# Logging Level:
+# CRITICAL = FATAL = 50
+# ERROR = 40
+# WARNING = WARN = 30
+# INFO = 20
+# DEBUG = 10
+LOGLEVEL = 20
 
 # File to append log data to
-logFile ='TwitchBotLogs.log'
+LOGFILE ='TwitchBotLogs.log'
+
+# Tuple holding bot info (just a shortcut)
+DATA = URL, PORT, USER, PASS, CHAN, PREFIX

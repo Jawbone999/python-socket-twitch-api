@@ -7,7 +7,7 @@ import logging
 from lib import TwitchBot
 from traceback import format_exception_only
 
-logging.basicConfig(filename=config.logFile, level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+logging.basicConfig(filename=config.LOGFILE, level=config.LOGLEVEL, format='%(asctime)s %(levelname)s: %(message)s')
 logging.info('Starting bot...')
 myBot = TwitchBot(*config.DATA)
 try:
