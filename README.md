@@ -33,6 +33,10 @@ Within the `input` folder, there are a few files which allow for bot configurati
 ### `commands.json`
 In this folder holds all the commands and their aliases. To add an alias, simply add to the list of strings under the desired command. Do **not** edit the main command name unless you know what you're doing.
 
+One exception to the standard format within this file is the key `customsay`. Executing the chat command `[PREFIX]customsay [KEY]` will make the bot reply with `[VALUE]`. 
+
+This file has some pre-built data within it, but it can be removed at one's discretion.
+
 ### `admins.json`
 While the bot prevents non-moderators from using every command, you can allow specific users full access using this file. Simply add their name to the list.
 

@@ -5,6 +5,7 @@ import sys
 import json
 from random import randint, sample
 import operator
+from traceback import format_exception_only
 
 class TwitchBot:
 	def __init__(self, url, port, user, token, chan, prefix):
@@ -23,13 +24,18 @@ class TwitchBot:
 
 	def run(self):
 		while True:
-			messages = self.irc.recv_messages()
-			if messages:
-				for msg in messages:
-					if msg:
-						if msg['message'].startswith(self.prefix):
-							msg['message'] = msg['message'][1:]
-							self.handle_command(msg)
+			try:
+				messages = self.irc.recv_messages()
+				if messages:
+					for msg in messages:
+						if msg:
+							if msg['message'].startswith(self.prefix):
+								msg['message'] = msg['message'][1:]
+								self.handle_command(msg)
+			except SystemExit:
+				sys.exit()
+			except Exception as e:
+				logging.fatal(f'Exception Caught: {" ".join(format_exception_only(type(e), e))}')
 
 	def handle_command(self, data):
 		args = data['message'].split()
@@ -67,7 +73,17 @@ class TwitchBot:
 				logging.info(f'Received command SUBTIME from {user}')
 				# This is not exact whatsoever
 				self.irc.send_private(user, f'You have been subscribed for at least {self.subTime(badges)} months.')
+		elif command == 'customsay':
+			if self.hasPerm(badges, minimum='vip') or user in self.admins:
+				logging.info(f'Received command CUSTOMSAY from {user}')
+				self.customSay(args)
 	
+	def customSay(self, args):
+		words = ' '.join(args).lower()
+		if words in self.commands['customsay'].keys():
+			self.irc.send_channel(self.commands['customsay'][words])
+			logging.info(f'Sent custom speech message: {words}')
+
 	def highestPermission(self, badgeList):
 		# badges.json MUST list badges in decreasing permission level order
 		for badge in self.permissionValues:

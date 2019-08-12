@@ -1,4 +1,4 @@
 *.pyc
 *_test.py
 /__pycache__
-/logs
+*.log

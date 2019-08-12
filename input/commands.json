@@ -43,5 +43,10 @@
         "subtime",
         "subbed",
         "sublength"
-    ]
+    ],
+    "customsay": {
+        "top text": "BOTTOM TEXT",
+        "okay gamers": "it's time to rise up",
+        "we live": "in a society"
+    }
 }

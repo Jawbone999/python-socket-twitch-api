@@ -20,4 +20,4 @@ PREFIX = '$'
 DATA = URL, PORT, USER, PASS, CHAN, PREFIX
 
 # File to append log data to
-logFile ='logs/TwitchBotLogs.log'
+logFile ='TwitchBotLogs.log'
