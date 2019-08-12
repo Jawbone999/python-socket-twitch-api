@@ -17,7 +17,7 @@ To create a bot with which you may interface with Twitch, you must do the follow
 
    Save this token somewhere secure, as it acts as a password to your bot account.
 
-- You are now ready to fill in the `config.py` file.
+- You are now ready to fill in the `input/config.py` file.
 
    USER = *Your bot's Twitch account name*
 
