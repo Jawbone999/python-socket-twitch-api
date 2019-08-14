@@ -77,6 +77,20 @@ class TwitchBot:
 			if self.hasPerm(badges, minimum='vip') or user in self.admins:
 				logging.info(f'Received command CUSTOMSAY from {user}')
 				self.customSay(args)
+		elif command == 'help':
+			logging.info(f'Received command HELP from {user}')
+			self.help(user, args)
+
+	def help(self, user, args):
+		if not args:
+			message = ' | '.join(self.commands.keys())
+		else:
+			if args[0] not in self.commands:
+				message = 'Error - Unknown command. USAGE: `help` or `help [command]`'
+			else:
+				message = 'Explanation of command' # TODO THIS
+		self.irc.send_private(user, message)
+
 	
 	def customSay(self, args):
 		words = ' '.join(args).lower()

@@ -44,6 +44,9 @@
         "subbed",
         "sublength"
     ],
+    "help": [
+        "help"
+    ],
     "customsay": {
         "top text": "BOTTOM TEXT",
         "okay gamers": "it's time to rise up",
