@@ -14,7 +14,7 @@ try:
     logging.info('Running bot...')
     myBot.run()
 except(KeyboardInterrupt, SystemExit):
-    logging.info('Exiting program...')
+    logging.info('Received EXIT signal, exiting program...')
 except Exception as e:
     logging.fatal(f'Program crashed: {" ".join(format_exception_only(type(e), e))}')
 finally:

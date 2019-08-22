@@ -32,8 +32,8 @@ class TwitchBot:
 							if msg['message'].startswith(self.prefix):
 								msg['message'] = msg['message'][1:]
 								self.handle_command(msg)
-			except SystemExit:
-				sys.exit()
+			except (KeyboardInterrupt, SystemExit):
+				raise 
 			except Exception as e:
 				logging.fatal(f'Exception Caught: {" ".join(format_exception_only(type(e), e))}')
 
@@ -90,7 +90,7 @@ class TwitchBot:
 			else:
 				message = 'Explanation of command' # TODO THIS
 		self.irc.send_private(user, message)
-
+#TODO: Fix the crash with colons?
 	
 	def customSay(self, args):
 		words = ' '.join(args).lower()
