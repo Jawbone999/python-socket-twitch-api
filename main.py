@@ -18,4 +18,6 @@ except(KeyboardInterrupt, SystemExit):
 except Exception as e:
     logging.fatal(f'Program crashed: {" ".join(format_exception_only(type(e), e))}')
 finally:
+    myBot.stop()
+    logging.info('Program Ended')
     exit()

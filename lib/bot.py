@@ -6,6 +6,7 @@ import json
 from random import randint, sample
 import operator
 from traceback import format_exception_only
+import emoji
 
 class TwitchBot:
 	def __init__(self, url, port, user, token, chan, prefix):
@@ -37,6 +38,9 @@ class TwitchBot:
 			except Exception as e:
 				logging.fatal(f'Exception Caught: {" ".join(format_exception_only(type(e), e))}')
 
+	def stop(self):
+		self.irc.close()
+
 	def handle_command(self, data):
 		args = data['message'].split()
 		user = data['user']
@@ -66,12 +70,15 @@ class TwitchBot:
 				sys.exit()
 		elif command in self.commands['echo']:
 			if self.hasPerm(badges):
-				logging.info(f'Received command ECHO from {user}')
-				self.irc.send_channel(' '.join(args))
+				if not args:
+					self.irc.send_private(user, f'Error - {command} requires arguments.')
+				else:
+					logging.info(f'Received command ECHO from {user}: "{emoji.demojize(" ".join(args))}"')
+					self.irc.send_channel(' '.join(args))
 		elif command in self.commands['subtime']:
 			if self.hasPerm(badges, minimum='subscriber', op=operator.eq):
 				logging.info(f'Received command SUBTIME from {user}')
-				# This is not exact whatsoever
+				# This is not exact whatsoever for now
 				self.irc.send_private(user, f'You have been subscribed for at least {self.subTime(badges)} months.')
 		elif command == 'customsay':
 			if self.hasPerm(badges, minimum='vip') or user in self.admins:
@@ -90,7 +97,6 @@ class TwitchBot:
 			else:
 				message = 'Explanation of command' # TODO THIS
 		self.irc.send_private(user, message)
-#TODO: Fix the crash with colons?
 	
 	def customSay(self, args):
 		words = ' '.join(args).lower()

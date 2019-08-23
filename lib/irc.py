@@ -2,6 +2,8 @@ import socket
 import logging
 import sys
 import re
+import emoji
+import copy
 
 class Irc:
     def __init__(self, url, port, user, token, chan):
@@ -68,7 +70,7 @@ class Irc:
     def send(self, data):
         if data[-2:] == '\r\n':
             data = data[0:-2]
-        logging.debug(f'Sent data: {data}')
+        logging.debug(f'Sent data: {emoji.demojize(data)}')
         self.sock.send(str.encode(data + '\r\n'))
     
     def ping(self, data):
@@ -83,7 +85,7 @@ class Irc:
         if not dd[-1]:
             dd.pop(-1)
         for line in dd:
-            logging.debug(f'Received data: {line}')
+            logging.debug(f'Received data: {emoji.demojize(line)}')
 
         return data
 
@@ -113,7 +115,9 @@ class Irc:
             for tag in tagList:
                 tagData = tag.split('/')
                 userData['badges'][tagData[0]] = int(tagData[1])
-            logging.debug(f'Parsed message data: {userData}')
+            loggedData = copy.deepcopy(userData)
+            loggedData['message'] = emoji.demojize(loggedData['message'])
+            logging.debug(f'Parsed message data: {loggedData}')
             return userData
 
     def logged_in(self, data):
