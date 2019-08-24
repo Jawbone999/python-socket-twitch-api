@@ -23,6 +23,9 @@ class TwitchBot:
 		with open('input/admins.json') as f:
 			self.admins = json.load(f)
 
+		with open('input/help.json') as f:
+			self.helpMessages = json.load(f)
+
 	def run(self):
 		while True:
 			try:
@@ -95,7 +98,7 @@ class TwitchBot:
 			if args[0] not in self.commands:
 				message = 'Error - Unknown command. USAGE: `help` or `help [command]`'
 			else:
-				message = 'Explanation of command' # TODO THIS
+				message = "HELP command not yet implemented."
 		self.irc.send_private(user, message)
 	
 	def customSay(self, args):

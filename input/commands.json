@@ -48,8 +48,7 @@
         "help"
     ],
     "customsay": {
-        "top text": "BOTTOM TEXT",
-        "okay gamers": "it's time to rise up",
-        "we live": "in a society"
+        "welcome": "Welcome to the stream!",
+        "thanks": "Thank you for watching!"
     }
 }
