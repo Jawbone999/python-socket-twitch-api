@@ -1,4 +1,4 @@
-from .irc import Irc
+from .irc import TwitchIrc
 from time import sleep
 import logging
 import sys
@@ -10,7 +10,7 @@ import emoji
 
 class TwitchBot:
 	def __init__(self, url, port, user, token, chan, prefix):
-		self.irc = Irc(url, port, user, token, chan)
+		self.irc = TwitchIrc(url, port, user, token, chan)
 		self.prefix = prefix
 		self.poll = {'open': False}
 

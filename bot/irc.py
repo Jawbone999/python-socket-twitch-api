@@ -5,7 +5,7 @@ import re
 import emoji
 import copy
 
-class Irc:
+class TwitchIrc:
     def __init__(self, url, port, user, token, chan):
         self.url = url
         self.port = int(port)
