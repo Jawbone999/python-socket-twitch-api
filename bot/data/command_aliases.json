@@ -47,8 +47,7 @@
     "help": [
         "help"
     ],
-    "customsay": {
-        "welcome": "Welcome to the stream!",
-        "thanks": "Thank you for watching!"
-    }
+    "replyto": [
+        
+    ]
 }

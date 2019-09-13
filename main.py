@@ -8,6 +8,7 @@ logFile, logLevel, *botData = DATA
 logging.basicConfig(filename=logFile, level=logLevel, format='%(asctime)s %(levelname)s: %(message)s')
 
 myBot = TwitchBot(*botData)
+
 try:
     logging.debug('Running bot...')
     myBot.run()
