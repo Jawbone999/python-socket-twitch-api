@@ -13,7 +13,6 @@ class TwitchIrc:
         self.token = token
         self.channel = '#' + chan
         self.attempts = 0
-        self.connect()
 
     def connect(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

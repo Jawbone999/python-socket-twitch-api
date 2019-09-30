@@ -10,13 +10,13 @@ logging.basicConfig(filename=logFile, level=logLevel, format='%(asctime)s %(leve
 myBot = TwitchBot(*botData)
 
 try:
-    logging.debug('Running bot...')
+    logging.debug('Starting bot...')
     myBot.run()
 except(KeyboardInterrupt, SystemExit):
     logging.info('Received EXIT signal, exiting program...')
 except Exception as e:
     logging.fatal(f'Program crashed: {" ".join(format_exception_only(type(e), e))}')
 finally:
+    logging.debug('Stopping bot...')
     myBot.stop()
-    logging.debug('Script Ended')
     exit()

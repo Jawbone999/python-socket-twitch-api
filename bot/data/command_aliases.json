@@ -39,15 +39,16 @@
         "simonsays",
         "send"
     ],
-    "subtime": [
-        "subtime",
-        "subbed",
-        "sublength"
-    ],
-    "help": [
-        "help"
-    ],
     "replyto": [
-        
+        "replyto",
+        "automessage",
+        "autosay",
+        "greet"
+    ],
+    "createcommand": [
+        "createcommand",
+        "customcommand",
+        "customsay",
+        "makecommand"
     ]
 }

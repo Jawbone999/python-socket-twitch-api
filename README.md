@@ -17,7 +17,7 @@ To create a bot with which you may interface with Twitch, you must do the follow
 
    Save this token somewhere secure, as it acts as a password to your bot account.
 
-- You are now ready to fill in the `input/config.py` file.
+- You are now ready to fill in the `config.py` file.
 
    USER = *Your bot's Twitch account name*
 
@@ -28,20 +28,17 @@ To create a bot with which you may interface with Twitch, you must do the follow
 __NOTE: Your Twitch bot must be [verified](https://dev.twitch.tv/limit-increase) to make full use of this API__
 
 # Configuring your bot
-Within the `input` folder, there are a few files which allow for bot configuration.
+Within `bot/data`, there are a few files which allow for bot configuration. All of these may be modified through the bot in chat, or directly through a text editor.
 
-### `commands.json`
-In this folder holds all the commands and their aliases. To add an alias, simply add to the list of strings under the desired command. Do **not** edit the main command name unless you know what you're doing.
+### `command_aliases.json`
+In this folder holds all the commands and their aliases. To add an alias, simply add to the list of strings under the desired command. Do **not** edit the main command key unless you know what you're doing.
 
 One exception to the standard format within this file is the key `customsay`. Executing the chat command `[PREFIX]customsay [KEY]` will make the bot reply with `[VALUE]`. 
 
-This file has some pre-built data within it, but it can be removed at one's discretion.
+This file has some pre-built aliases within it, but it can be removed at one's discretion.
 
 ### `admins.json`
 While the bot prevents non-moderators from using every command, you can allow specific users full access using this file. Simply add their name to the list.
-
-### `poll.json`
-This poll is used if the _createpoll_ command is run with the argument _auto_. Change it how you like.
 
 ### `badges.json`
 This file assigns numerical value to each badge level. It is only used when calculating "Total permission level". So, for example, someone who is a VIP sub has the same total permission level as a moderator by default. This metric is not used anywhere by default in the bot, however.

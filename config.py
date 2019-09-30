@@ -25,12 +25,12 @@ URL = 'irc.twitch.tv'
 PORT = 6667
 
 # Logging Level Options:
-# CRITICAL = FATAL = 50
-# ERROR = 40
-# WARNING = WARN = 30
-# INFO = 20
-# DEBUG = 10
-LOGLEVEL = 20
+# CRITICAL
+# ERROR
+# WARNING
+# INFO
+# DEBUG
+LOGLEVEL = "DEBUG"
 
 # File which holds the bot logs
 LOGFILE ='TwitchBotLogs.log'

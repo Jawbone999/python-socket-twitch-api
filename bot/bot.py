@@ -11,20 +11,28 @@ import emoji
 class TwitchBot:
 	def __init__(self, url, port, user, token, chan, prefix):
 		self.irc = TwitchIrc(url, port, user, token, chan)
+		self.irc.connect()
 		self.prefix = prefix
 		self.poll = {'open': False}
 
-		with open('input/commands.json') as f:
+		with open('bot/data/command_aliases.json') as f:
 			self.commands = json.load(f)
-		
-		with open('input/badges.json') as f:
-			self.permissionValues = json.load(f)
 
-		with open('input/admins.json') as f:
+		with open('bot/data/admins.json') as f:
 			self.admins = json.load(f)
 
-		with open('input/help.json') as f:
-			self.helpMessages = json.load(f)
+		with open('bot/data/custom_commands.json') as f:
+			self.customCommands = json.load(f)
+
+		with open('bot/data/auto_messages.json') as f:
+			self.autoMessages = json.load(f)
+
+		self.permissionValues = {
+			'broadcaster': 4,
+			'moderator': 3,
+			'vip': 2,
+			'subscriber': 1,
+		}
 
 	def run(self):
 		while True:
@@ -36,8 +44,11 @@ class TwitchBot:
 							if msg['message'].startswith(self.prefix):
 								msg['message'] = msg['message'][1:]
 								self.handle_command(msg)
+							elif msg['message'] in self.autoMessages:
+								logging.info(f'Replying to {msg["message"]}...')
+								self.irc.send_channel(self.autoMessages[msg['message']])
 			except (KeyboardInterrupt, SystemExit):
-				raise 
+				raise
 			except Exception as e:
 				logging.fatal(f'Exception Caught: {" ".join(format_exception_only(type(e), e))}')
 
@@ -50,46 +61,51 @@ class TwitchBot:
 		badges = data['badges']
 		command = args[0].lower()
 		args.pop(0)
+
 		if command in self.commands['vote']:
 			self.vote(user, args)
 		elif command in self.commands['createpoll']:
-			if self.hasPerm(badges):
+			if self.hasPerm(user, badges):
 				self.createpoll(user, args)
 		elif command in self.commands['endpoll']:
-			if self.hasPerm(badges):
+			if self.hasPerm(user, badges):
 				self.endpoll(user)
 		elif command in self.commands['showpoll']:
-			if self.hasPerm(badges):
+			if self.hasPerm(user, badges):
 				self.showpoll(user, args)
 		elif command in self.commands['ping']:
-			if self.hasPerm(badges):
+			if self.hasPerm(user, badges):
 				logging.info(f'Received command PING from {user}')
 				self.irc.send_channel('Pong!')
 		elif command in self.commands['disconnect']:
-			if user in self.admins or self.hasPerm(badges, minimum='broadcaster'):
+			if self.hasPerm(user, badges, minimum='broadcaster'):
 				logging.info(f'Received command QUIT from {user}')
 				self.irc.close()
 				logging.debug('Disconnected from IRC server.')
 				sys.exit()
 		elif command in self.commands['echo']:
-			if self.hasPerm(badges):
+			if self.hasPerm(user, badges):
 				if not args:
 					self.irc.send_private(user, f'Error - {command} requires arguments.')
 				else:
 					logging.info(f'Received command ECHO from {user}: "{emoji.demojize(" ".join(args))}"')
 					self.irc.send_channel(' '.join(args))
-		elif command in self.commands['subtime']:
-			if self.hasPerm(badges, minimum='subscriber', op=operator.eq):
-				logging.info(f'Received command SUBTIME from {user}')
-				# This is not exact whatsoever for now
-				self.irc.send_private(user, f'You have been subscribed for at least {self.subTime(badges)} months.')
-		elif command == 'customsay':
-			if self.hasPerm(badges, minimum='vip') or user in self.admins:
-				logging.info(f'Received command CUSTOMSAY from {user}')
-				self.customSay(args)
-		elif command == 'help':
-			logging.info(f'Received command HELP from {user}')
-			self.help(user, args)
+		elif command in self.commands['replyto']:
+			if self.hasPerm(user, badges):
+				if not args:
+					self.irc.send_private(user, f'Error - {command} requires arguments.')
+				else:
+					self.replyto(user, args)
+
+	def replyto(self, user, args):
+		logging.info(f'Received command REPLYTO from {user}')
+		args = (' '.join(args)).split(' | ')
+		if len(args) != 2:
+			self.irc.send_private(user, f'Error - REPLYTO requires two | separated arguments.')
+		else:
+			self.autoMessages[args[0]] = args[1]
+			with open('bot/data/auto_messages.json', 'w') as f:
+				json.dump(self.autoMessages, f)
 
 	def help(self, user, args):
 		if not args:
@@ -100,43 +116,23 @@ class TwitchBot:
 			else:
 				message = "HELP command not yet implemented."
 		self.irc.send_private(user, message)
-	
+
 	def customSay(self, args):
 		words = ' '.join(args).lower()
 		if words in self.commands['customsay'].keys():
 			self.irc.send_channel(self.commands['customsay'][words])
 			logging.info(f'Sent custom speech message: {words}')
 
-	def highestPermission(self, badgeList):
-		# badges.json MUST list badges in decreasing permission level order
-		for badge in self.permissionValues:
-			if badge in badgeList:
-				logging.debug(f'Highest permission level: {badge} : {self.permissionValues[badge]}')
-				return badge
-
-	def totalPermission(self, badgeList):
-		total = 0
-		for badge in self.permissionValues:
-			if badge in badgeList:
-				total += self.permissionValues[badge]
-		logging.debug(f'Total permission level: {total}')
-		return total
-
-	def subTime(self, badges):
-		if 'subscriber' not in badges:
-			return 0
-		return badges['subscriber']
-
-	def hasPerm(self, badges, minimum='moderator', op=operator.ge, sum=False):
-		if sum:
-			return op(self.totalPermission(badges), self.permissionValues[minimum])
-		else:
-			if op == operator.eq:
-				return minimum in badges
-			return op(self.permissionValues[self.highestPermission(badges)], self.permissionValues[minimum])
+	def hasPerm(self, user, badges, minimum='moderator'):
+		if user in self.admins:
+			return True
+		perms = []
+		for badge in badges:
+			perms.append(self.permissionValues.get(badge, -1))
+		return max(perms) >= self.permissionValues[minimum]
 
 	def createpoll(self, user, args):
-		# Usage: createpoll (auto | json mimicking input/poll.json)
+		logging.info(f'Received command CREATEPOLL from {user}')
 		try:
 			if not args:
 				# The user failed to give any arguments
@@ -160,9 +156,9 @@ class TwitchBot:
 		except:
 			logging.error(f'Failed to create poll by {user}')
 			self.irc.send_private(user, 'Error creating poll - check your arguments!')
-	
+
 	def showpoll(self, user, args):
-		# Usage: $showpoll
+		logging.info(f'Received command SHOWPOLL from {user}')
 		if self.poll['open']:
 			displayString = self.poll['title'] + f' ({self.prefix}vote) - Choices: '
 			displayString += ' | '.join([f'{num+1}. {opt}' for num, opt in enumerate(self.poll['choices'])])
@@ -173,7 +169,7 @@ class TwitchBot:
 			self.irc.send_private(user, "Error - there are no polls in progress!")
 
 	def endpoll(self, user):
-		# Usage: $endpoll
+		logging.info(f'Received command ENDPOLL from {user}')
 		if not self.poll['open']:
 			# There's no created poll whatsoever
 			logging.debug(f'Failed to end poll as requested by {user} - no poll exists!')
@@ -198,6 +194,7 @@ class TwitchBot:
 		self.irc.send_channel(displayString)
 
 	def vote(self, user, args):
+		logging.info(f'Received command VOTE from {user}')
 		if not args:
 			return self.irc.send_private(user, 'Error casting vote - please send a choice!')
 		pick = args[0].lower()
