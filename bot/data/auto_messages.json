@@ -1,3 +1,6 @@
 {
-    
+    "Hello!": {
+        "LastTime": 0,
+        "Timer": 1
+    }
 }

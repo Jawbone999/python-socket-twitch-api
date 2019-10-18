@@ -59,3 +59,30 @@ Inside `bot.py`, the function `handle_command` performs all permission checks be
 Once you're happy with the configurations, simply navigate to the directory of `main.py` and run `python main.py`.
 
 If you're not used to command line, edit `setup.bat` and `run.bat`, then run those two files in that order.
+
+# Bot Commands
+
+## Ping
+A simple test to see that the bot is connected to the chat.
+Usage: `$ping`
+Response: `Pong!`
+
+# Echo
+Make the bot say exactly what you say.
+Usage: `$echo {MESSAGE}`
+Response: `{MESSAGE}`
+
+# ReplyTo
+Make the bot reply to any specific chat message whenever it appears.
+Usage: `$replyto {MESSAGE} | {REPLY}`
+Response: None
+Later...
+User: `{MESSAGE}`
+Bot: `{REPLY}`
+
+# AutoMessage
+The bot will periodically send this message every _ minutes.
+Usage: `$automessage {MESSAGE} | {MINUTES}`
+Reply: None
+{MINUTES} Later...
+Bot: `{MESSAGE}`

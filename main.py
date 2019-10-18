@@ -1,6 +1,6 @@
 from traceback import format_exception_only
 from bot import TwitchBot
-from config import DATA
+from config_test import DATA
 from sys import exit
 import logging
 
@@ -18,5 +18,4 @@ except Exception as e:
     logging.fatal(f'Program crashed: {" ".join(format_exception_only(type(e), e))}')
 finally:
     logging.debug('Stopping bot...')
-    myBot.stop()
     exit()

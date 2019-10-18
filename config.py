@@ -36,4 +36,4 @@ LOGLEVEL = "DEBUG"
 LOGFILE ='TwitchBotLogs.log'
 
 # Tuple holding bot info (just a shortcut)
-DATA = LOGLEVEL, LOGFILE, URL, PORT, USER, PASS, CHAN, PREFIX
+DATA = LOGFILE, LOGLEVEL, URL, PORT, USER, PASS, CHAN, PREFIX

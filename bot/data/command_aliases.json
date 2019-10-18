@@ -1,4 +1,12 @@
 {
+    "ping": [
+        "ping",
+        "upcheck"
+    ],
+    "poll": [
+        "poll",
+        "survey"
+    ],
     "vote": [
         "vote",
         "pick",
@@ -12,26 +20,6 @@
         "exit",
         "stop"
     ],
-    "createpoll": [
-        "createpoll",
-        "generatepoll",
-        "makepoll",
-        "startpoll"
-    ],
-    "endpoll": [
-        "endpoll",
-        "stoppoll"
-    ],
-    "showpoll": [
-        "showpoll",
-        "displaypoll",
-        "poll",
-        "currentpoll"
-    ],
-    "ping": [
-        "ping",
-        "upcheck"
-    ],
     "echo": [
         "echo",
         "say",
@@ -39,16 +27,11 @@
         "simonsays",
         "send"
     ],
-    "replyto": [
+    "custom_reply": [
+        "customreply",
         "replyto",
         "automessage",
         "autosay",
         "greet"
-    ],
-    "createcommand": [
-        "createcommand",
-        "customcommand",
-        "customsay",
-        "makecommand"
     ]
 }
