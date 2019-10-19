@@ -99,6 +99,7 @@ Bot: `I am a cool bot!`
 Create/Start, End, or Display a poll in chat.
 
 __Create:__
+
 User: `$poll create auto`
 
 *Bot sends the poll display string in chat.*
@@ -110,11 +111,13 @@ User: `$poll create {"title": "Pick the game I'm going to play!","choices": ["Ga
 *Bot sends the poll display string in chat.*
 
 __End:__
+
 User: `$poll end`
 
 *Bot sends the poll results in chat.*
 
 __Display:__
+
 User: `$poll display`
 
 *Bot sends the poll display string in chat.*
@@ -130,6 +133,7 @@ User: *$vote 3*
 Create, Delete, or Display automated replies.
 
 __Create:__
+
 User: `$reply create This bot sucks! | No u`
 
 *Later...*
@@ -139,6 +143,7 @@ User: `This bot sucks!`
 Bot: `No u`
 
 __Delete:__
+
 *Assume `This bot rocks!` is another automated reply*
 
 User: `$reply delete This bot sucks! | This bot rocks!`
@@ -154,6 +159,7 @@ User: `This bot rocks!`
 *Bot does not reply.*
 
 __Display:__
+
 User: `$reply display`
 
 *Bot sends all reply: response objects in a private message.*
@@ -162,6 +168,7 @@ User: `$reply display`
 Allows the creation, deletion, and display of scheduled automated messages.
 
 __Create:__
+
 User: `$schedule create Remember to drink water! | 5`
 
 *Five minutes later...*
@@ -169,6 +176,7 @@ User: `$schedule create Remember to drink water! | 5`
 Bot: `Remember to drink water!`
 
 __Delete:__
+
 User: `$schedule delete Remember to drink water!`
 
 *Five minutes later...*
@@ -176,6 +184,7 @@ User: `$schedule delete Remember to drink water!`
 *Bot does not send automated message.*
 
 __Display:__
+
 User: `$schedule display`
 
 *Bot privately messages automated message dictionary.*
@@ -184,6 +193,7 @@ User: `$schedule display`
 Create, delete, and display custom commands.
 
 __Create:__
+
 User: `$command create setup Computer, keyboard, and mouse.`
 
 *Later...*
@@ -193,6 +203,7 @@ User: `$setup`
 Bot: `Computer, keyboard, and mouse.`
 
 __Delete:__
+
 User: `$command delete setup`
 
 *Later...*
@@ -202,6 +213,7 @@ User: `$setup`
 *Bot does not reply.*
 
 __Display:__
+
 User: `$command display`
 
 *Bot sends commands and replies privately to the user.*
