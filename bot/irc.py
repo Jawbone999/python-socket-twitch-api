@@ -167,7 +167,7 @@ class TwitchIrc:
     
     def ping(self, data):
         """
-        The function to response to automatic Twitch IRC server ping messages.
+        The function to respond to automatic Twitch IRC server ping messages.
         Failure to respond results in being kicked from the server.
         Checks to see if the message is a PING message, and replies accordingly.
 
@@ -183,23 +183,47 @@ class TwitchIrc:
             logging.debug('Sent automated Ping to IRC server.')
 
     def recv(self, amount=1024):
+        """
+        This function receives data and logs it.
+
+        Parameters:
+            amount (int): The number of bytes to accept at once.
+
+        Returns:
+            data (bytes): The received data.
+
+        """
         data = self.sock.recv(amount)
 
         dd = data.decode().split('\r\n')
+
         if not dd[-1]:
             dd.pop(-1)
+
         for line in dd:
             logging.debug(f'Received data: {emoji.demojize(line)}')
 
         return data
 
     def recv_messages(self, amount=1024):
+        """
+        This function is the main driver of the TwitchIrc class.
+        It receives chunks of encoded data and passes it on to a parser.
+
+        Parameters:
+            amount (int): The number of bytes to accept at once.
+
+        Returns:
+            parsed_messages (list): A list of messages received.
+        """
+
         data = self.recv(amount)
         if not data:
             logging.error('Lost connection, reconnecting...')
             self.connect()
 
         self.ping(data)
+
         if self.check_has_message(data):
             return [self.parse_message(line) for line in data.split(b'\r\n')]
 
@@ -211,7 +235,7 @@ class TwitchIrc:
             data (bytes): The encoded data received from the IRC server.
         
         Returns:
-            Boolean: True if a message is found in data, false otherwise.
+            search (bool): True if a message is found in data, false otherwise.
         """
 
         return re.search(r':[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$', data.decode())
@@ -256,7 +280,7 @@ class TwitchIrc:
             data (bytes): The data which may hold the authentication failure message.
         
         Returns:
-            Boolean: False if the authentication has failed, true otherwise.
+            match (boolean): False if the authentication has failed, true otherwise.
         """
 
         return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login authentication failed\r\n$', data.decode())

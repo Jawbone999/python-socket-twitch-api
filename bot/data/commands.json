@@ -3,15 +3,6 @@
         "ping",
         "upcheck"
     ],
-    "poll": [
-        "poll",
-        "survey"
-    ],
-    "vote": [
-        "vote",
-        "pick",
-        "choose"
-    ],
     "disconnect": [
         "disconnect",
         "dc",
@@ -27,11 +18,31 @@
         "simonsays",
         "send"
     ],
-    "custom_reply": [
+    "poll": [
+        "poll",
+        "survey"
+    ],
+    "vote": [
+        "vote",
+        "pick",
+        "choose"
+    ],
+    "reply": [
+        "reply",
+        "replies",
         "customreply",
         "replyto",
+        "autoreply"
+    ],
+    "schedule": [
+        "schedule",
         "automessage",
         "autosay",
-        "greet"
+        "timersay",
+        "repeat"
+    ],
+    "command": [
+        "command",
+        "customcommand"
     ]
 }
