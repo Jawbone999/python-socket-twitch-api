@@ -196,7 +196,7 @@ class TwitchBot:
 		"""
 
 		if not self.has_permission(user, badges):
-			self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'PING')
 
 		logging.info(f'Received PING command from {user}')
 
@@ -217,7 +217,7 @@ class TwitchBot:
 		"""
 
 		if not self.has_permission(user, badges):
-			self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'DISCONNECT')
 
 		logging.info(f'Received DISCONNECT command from {user}')
 
@@ -242,10 +242,10 @@ class TwitchBot:
 		"""
 
 		if not self.has_permission(user, badges):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'ECHO')
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'ECHO', '{ECHOED MESSAGE}')
 
 		message = ' '.join(args)
 
@@ -268,7 +268,7 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, f'NoArgError')
+			return self.arg_missing_error(user, 'POLL', '[create | display | end]')
 
 		function = args.pop(0).lower()
 
@@ -279,7 +279,7 @@ class TwitchBot:
 		elif function == 'display':
 			self.display_poll(user, badges)
 		else:
-			self.irc.send_private(user, 'BadArgError')
+			self.irc.send_private(user, f'Error - unknown argument {function}. Try [create | display | end] instead.')
 
 	def create_poll(self, user, badges, args):
 		"""
@@ -297,10 +297,10 @@ class TwitchBot:
 		"""
 
 		if not self.has_permission(user, badges):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'POLL CREATE')
 
 		if not args:
-				return self.irc.send_private(user, f'NoArgError')
+			return self.arg_missing_error(user, 'POLL CREATE', '[auto | {JSON STRING}]')
 
 		try:
 			if args[0].lower() == 'auto':
@@ -344,10 +344,10 @@ class TwitchBot:
 		"""
 
 		if not self.has_permission(user, badges):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'POLL END')
 
 		if not self.current_poll['open']:
-			return self.irc.send_private(user, "BadStateError")
+			return self.irc.send_private(user, 'Error - There is no currently running poll to end!')
 
 		# Close the poll
 		self.current_poll['open'] = False
@@ -391,10 +391,10 @@ class TwitchBot:
 		"""
 
 		if not self.has_permission(user, badges, minimum='subscriber'):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'POLL DISPLAY', 'SUBSCRIBER')
 
 		if not self.current_poll['open']:
-			return self.irc.send_private(user, 'BadStateError')
+			return self.irc.send_private(user, 'Error - There is no currently running poll to display!')
 
 		displayString = self.current_poll['title'] + f' ({self.prefix}vote) - Choices: '
 		displayString += ' | '.join([f'{num+1}. {opt}' for num, opt in enumerate(self.current_poll['choices'])])
@@ -419,16 +419,16 @@ class TwitchBot:
 		"""
 
 		if not self.current_poll['open']:
-			return self.irc.send_private(user, 'BadStateError')
+			return self.irc.send_private(user, 'Error - There is no currently running poll to vote in!')
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'VOTE', '{CHOICE}')
 
 		pick = args[0].lower()
 
 		if pick == 'random':
 			if not self.current_poll['random']:
-				return self.irc.send_private(user, 'BadStateError')
+				return self.irc.send_private(user, 'Error - random is not enable for this poll!')
 
 			pick = randint(1, len(self.current_poll['choices']))
 
@@ -436,7 +436,7 @@ class TwitchBot:
 			pick = int(pick)
 
 			if pick <= 0 or pick > len(self.current_poll['choices']):
-				return self.irc.send_private(user, 'BadArgError')
+				return self.irc.send_private(user, 'Error - your choice must be in the list of options!')
 
 			self.current_poll['votes'][user] = pick
 
@@ -444,7 +444,7 @@ class TwitchBot:
 			
 			self.irc.send_private(user, 'Your vote has been receieved.')
 		except:
-			self.irc.send_private(user, 'BadArgError')
+			self.irc.send_private(user, 'Error - invalid choice!')
 
 	def reply(self, user, badges, args):
 		"""
@@ -461,10 +461,10 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgError')
+			return self.arg_missing_error(user, 'REPLY', '[create | display | delete]')
 
 		if not self.has_permission(user, badges):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'REPLY')
 
 		function = args.pop(0).lower()
 
@@ -475,7 +475,7 @@ class TwitchBot:
 		elif function == 'display':
 			self.display_reply(user)
 		else:
-			self.irc.send_private(user, 'BadArgError')
+			self.irc.send_private(user, f'Error - unknown argument {function}. Try [create | display | delete] instead.')
 
 	def create_reply(self, user, args):
 		"""
@@ -492,12 +492,12 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'REPLY CREATE', '{MESSAGE} | {REPLY}')
 		
 		args = ' '.join(args).split(' | ')
 
 		if len(args) != 2:
-			return self.irc.send_private(user, 'BadArgsError')
+			return self.irc.send_private(user, 'Error - two | separated arguments required.')
 
 		self.auto_replies[args[0]] = args[1]
 
@@ -524,7 +524,7 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'REPLY DELETE', '{MESSAGE}')
 
 		args = ' '.join(args).split(' | ')
 
@@ -576,10 +576,10 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgError')
+			return self.arg_missing_error(user, 'SCHEDULE', '[create | display | delete]')
 
 		if not self.has_permission(user, badges):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'SCHEDULE')
 
 		function = args.pop(0).lower()
 
@@ -590,7 +590,7 @@ class TwitchBot:
 		elif function == 'display':
 			self.display_schedule(user)
 		else:
-			self.irc.send_private(user, 'BadArgError')
+			self.irc.send_private(user, f'Error - unknown argument {function}. Try [create | display | end] instead.')
 
 	def create_schedule(self, user, args):
 		"""
@@ -606,17 +606,20 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'SCHEDULE CREATE', '{MESSAGE} | {FREQUENCY}')
 
 		args = ' '.join(args).split(' | ')
 
 		if len(args) != 2:
-			return self.irc.send_private(user, 'BadArgsError')
+			return self.irc.send_private(user, 'Error creating scheduled message - requires two | separated arguments.')
 
-		args[1] = int(args[1])
+		try:
+			args[1] = int(args[1])
+		except:
+			return self.irc.send_private(user, 'Error creating scheduled message - invalid frequency time.')
 
 		if args[1] <= 0:
-			return self.irc.send_private(user, 'BadArgsError')
+			return self.irc.send_private(user, 'Error creating scheduled message - invalid frequency time.')
 
 		try:
 			self.auto_messages[args[0]] = {
@@ -624,7 +627,7 @@ class TwitchBot:
 				"Timer": args[1]
 			}
 		except:
-			self.irc.send_private(user, 'BadArgsError')
+			self.irc.send_private(user, 'Error creating scheduled message - use two | separated arguments.')
 
 		# Create a deep copy for json writing purposes.
 		# We don't want to interfere with established LastTime values.
@@ -652,7 +655,7 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'SCHEDULE DELETE', '{MESSAGE1} | {MESSAGE2} | ...')
 
 		args = ' '.join(args).split(' | ')
 
@@ -669,7 +672,7 @@ class TwitchBot:
 			autoMsgs[msg]['LastTime'] = 0
 
 		with open('bot/data/auto_messages.json', 'w') as f:
-			json.dump(self.auto_messages, f)
+			json.dump(autoMsgs, f)
 
 	def display_schedule(self, user):
 		"""
@@ -710,10 +713,10 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgError')
+			return self.arg_missing_error(user, 'COMMAND', '[create | display | delete]')
 
 		if not self.has_permission(user, badges):
-			return self.irc.send_private(user, 'PermissionError')
+			return self.permission_error(user, 'COMMAND')
 
 		function = args.pop(0).lower()
 
@@ -724,7 +727,7 @@ class TwitchBot:
 		elif function == 'display':
 			self.display_command(user)
 		else:
-			self.irc.send_private(user, 'BadArgError')
+			self.irc.send_private(user, f'Error - unknown argument {function}. Try [create | display | delete] instead.')
 
 	def create_command(self, user, args):
 		"""
@@ -740,19 +743,24 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'COMMAND CREATE', '{COMMAND} {MESSAGE}')
 
 		if len(args) < 2:
-			return self.irc.send_private(user, 'BadArgsError')
+			return self.irc.send_private(user, 'Error creating command - requires at least two space separated arguments.')
+
+		cmd = args[0].lower()
+
+		if cmd in self.command_map:
+			return self.irc.send_private(user, f'Error creating command - command name "{cmd}" is already in use.')
 
 		msg = ' '.join(args[1:])
 
-		self.custom_commands[args[0]] = msg
+		self.custom_commands[cmd] = msg
 
 		with open('bot/data/custom_commands.json', 'w') as f:
 			json.dump(self.custom_commands, f)
 
-		logging.info(f'Received command COMMAND CREATE from {user}: {args[0]}: {args[1:]}')
+		logging.info(f'Received command COMMAND CREATE from {user}: {cmd}: {args[1:]}')
 
 	def delete_command(self, user, args):
 		"""
@@ -768,13 +776,15 @@ class TwitchBot:
 		"""
 
 		if not args:
-			return self.irc.send_private(user, 'NoArgsError')
+			return self.arg_missing_error(user, 'COMMAND DELETE', '{COMMAND}')
 
 		for cmd in args:
+			cmd = cmd.lower()
+
 			msg = self.custom_commands.pop(cmd, None)
 
 			if msg:
-				logging.info(f'Recevied command COMMAND DELETE from {user}: {args}: {msg}')
+				logging.info(f'Recevied command COMMAND DELETE from {user}: {cmd}: {msg}')
 
 		with open('bot/data/custom_commands.json', 'w') as f:
 			json.dump(self.custom_commands, f)
@@ -839,5 +849,35 @@ class TwitchBot:
 			None
 		"""
 
-		self.irc.send_private(user, f'Check out my user profile for a link to the documentation!')
+		self.irc.send_private(user, f'Check out the README: https://github.com/Jawbone999/python-socket-twitch-api')
 		logging.info(f'Received command HELP from {user}')
+
+	def permission_error(self, user, command, level='MODERATOR'):
+		"""
+		This function sends the user a permission error.
+
+		Parameters:
+			user (string): The user who called the command.
+			command (string): The command the user tried to call.
+			level (string): The permission check the user failed to pass.
+
+		Returns:
+			None
+		"""
+
+		self.irc.send_private(user, f'Error - you require at least {level} permissions to execute the {command} command.')
+
+	def arg_missing_error(self, user, command, arg):
+		"""
+		This function sends the user a missing argument error.
+
+		Parameters:
+			user (string): The user who called the command.
+			command (string): The command the user tried to call.
+			arg (string): The argument missing from the call.
+
+		Returns:
+			None
+		"""
+
+		self.irc.send_private(user, f'Error - Command should be in form: {self.prefix}{command} {arg}')
