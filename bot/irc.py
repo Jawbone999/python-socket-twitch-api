@@ -66,7 +66,7 @@ class TwitchIrc:
                 self.connect()
             else:
                 logging.critical(f'Failed to connect to IRC server. ({self.url}:{self.port})')
-                exit(f'Failed to connect to IRC server after {self.attempts} attempts. ({self.url}:{self.port})')
+                exit(f'Failed to connect to IRC server after {self.attempts+1} attempts. ({self.url}:{self.port})')
 
         # After establishing a connection, remain connected
         self.attempts = 0
@@ -283,4 +283,4 @@ class TwitchIrc:
             match (boolean): False if the authentication has failed, true otherwise.
         """
 
-        return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login authentication failed\r\n$', data.decode())
+        return not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :(Login authentication failed)?(Invalid .*)?\r\n$', data.decode())
