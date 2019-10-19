@@ -29,7 +29,7 @@ PORT = 6667
 # ERROR
 # INFO
 # DEBUG
-LOGLEVEL = "DEBUG"
+LOGLEVEL = "INFO"
 
 # File which holds the bot logs
 LOGFILE ='TwitchBotLogs.log'
