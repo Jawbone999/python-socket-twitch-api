@@ -44,5 +44,8 @@
     "command": [
         "command",
         "customcommand"
+    ],
+    "help": [
+        "help"
     ]
 }

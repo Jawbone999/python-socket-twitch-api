@@ -825,3 +825,19 @@ class TwitchBot:
 			perms.append(self.permission_values.get(badge, -1))
 
 		return max(perms) >= self.permission_values[minimum]
+
+	def help(self, user, badges, args):
+		"""
+		This function sends the user a private message telling them to check the bot documentation.
+
+		Parameters:
+			user (string): The user who called the command.
+			badges (dict): A dictionary of badges and their corresponding level (or 1 if it has no levels).
+			args (list): A list of strings sent by the user along with their command.
+
+		Returns:
+			None
+		"""
+
+		self.irc.send_private(user, f'Check out my user profile for a link to the documentation!')
+		logging.info(f'Received command HELP from {user}')
