@@ -1,6 +1,6 @@
 from traceback import format_exception_only
 from bot import TwitchBot
-from config_test import DATA
+from config import DATA
 from sys import exit
 import logging
 

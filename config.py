@@ -27,7 +27,6 @@ PORT = 6667
 # Logging Level Options:
 # CRITICAL
 # ERROR
-# WARNING
 # INFO
 # DEBUG
 LOGLEVEL = "DEBUG"
