@@ -5,7 +5,7 @@ from sys import exit
 import logging
 
 logFile, logLevel, *botData = DATA
-logging.basicConfig(filename=logFile, level=logLevel, format='%(asctime)s %(levelname)s: %(message)s')
+logging.basicConfig(filename=logFile, filemode='w', level=logLevel, format='%(asctime)s %(levelname)s: %(message)s')
 
 myBot = TwitchBot(*botData)
 
